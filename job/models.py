@@ -1,6 +1,6 @@
 from django.db import models
 
-import environ
+import os
 import geocoder
 
 from datetime import *
@@ -63,8 +63,8 @@ class Job(models.Model):
     )
     industry = models.CharField(
         max_length=30,
-        choices=industry.choices,
-        default=industry.Business
+        choices=Industry.choices,
+        default=Industry.Business
     )
     experience = models.CharField(
         max_length=20,
@@ -81,7 +81,7 @@ class Job(models.Model):
     createsAt = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        g = geocoder.mapquest(self.address, key=environ.Env("GEOCODER_API"))
+        g = geocoder.mapquest(self.address, key=os.environ.get("GEOCODER_API"))
 
         print(g)
 
