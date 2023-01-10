@@ -4,9 +4,11 @@ from django.db.models import Avg, Max, Min, Count
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 
 from .serializers import JobSerializer
 from .models import Job
+from .filters import JobsFilter
 
 from django.shortcuts import get_object_or_404, get_list_or_404
 
@@ -14,10 +16,24 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 # Get job list
 @api_view(['GET'])
 def getAllJobs(request):
-    jobs = Job.objects.all()
 
-    serializer = JobSerializer(jobs, many=True)
-    return Response(serializer.data)
+    filterset = JobsFilter(
+        request.GET, queryset=Job.objects.all().order_by('id'))
+    count = filterset.qs.count()
+
+    # Pagination
+    perPage = 2
+    paginator = PageNumberPagination()
+    paginator.page_size = perPage
+
+    queryset = paginator.paginate_queryset(filterset.qs, request)
+
+    serializer = JobSerializer(queryset, many=True)
+    return Response({
+        'count': count,
+        'perPage': perPage,
+        'jobs': serializer.data
+    })
 
 
 # Get job by id
@@ -72,6 +88,7 @@ def deleteJob(request, pk):
     return Response({'message: Item deleted'}, status=status.HTTP_200_OK)
 
 
+# Search Topic
 @api_view(['GET'])
 def getTopicStat(request, topic):
 
