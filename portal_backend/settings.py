@@ -13,6 +13,7 @@ from pathlib import Path
 import os
 import dotenv
 import platform
+from datetime import timedelta
 
 # Initialise environment variables
 dotenv.read_dotenv()
@@ -44,13 +45,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework_simplejwt',
     'rest_framework',
     'corsheaders',
     'storages',
     'django.contrib.gis',
     'django_filters',
 
-    'job.apps.JobConfig'
+    'job.apps.JobConfig',
+    'account'
 ]
 
 MIDDLEWARE = [
@@ -117,7 +120,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=15),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+}
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
