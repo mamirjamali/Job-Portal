@@ -8,3 +8,6 @@ gitlab-runner.exe
 
 #Gitlab Builds
 builds/*
+
+#Loacal File Upload
+*.pdf
