@@ -1,10 +1,10 @@
 #Environment Variables
-portal_backend/.env/
+portal_backend/.env
 
 #Gitlab Runner
-config.toml/
-.runner_system_id/
-gitlab-runner.exe/
+config.toml
+gitlab-runner.exe
+.runner_system_id
 
 #Gitlab Builds
-builds/
+builds/*

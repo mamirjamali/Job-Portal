@@ -8,6 +8,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from .serializers import SignUpSerializer, UserSerializer
+from .models import UserProfile
+from .validators import validate_file_extention
 
 
 # Register users
@@ -67,6 +69,31 @@ def updateUser(request):
         user.password = make_password(data['password'])
 
     user.save()
+
+    serializer = UserSerializer(user, many=False)
+    return Response(serializer.data)
+
+
+# Upload resume
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def uploadResume(request):
+
+    user = request.user
+    resume = request.FILES['resume']
+
+    if resume == '':
+        return Response({'error': 'Please upload your resume'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    isValidFile = validate_file_extention(resume.name)
+
+    if not isValidFile:
+        return Response({'error': 'Please upload only PDF file.'},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+    user.userprofile.resume = resume
+    user.userprofile.save()
 
     serializer = UserSerializer(user, many=False)
     return Response(serializer.data)
