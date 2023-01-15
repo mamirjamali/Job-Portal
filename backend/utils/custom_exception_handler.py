@@ -7,8 +7,6 @@ def custom_exception_handler(exc, context):
 
     exception_class = exc.__class__.__name__
 
-    print("CLASS: ", exception_class)
-
     if exception_class == 'AuthenticationFailed':
         response.data = {
             'error': 'Invalid Email or Password.'
