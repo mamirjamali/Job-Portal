@@ -14,9 +14,9 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 
 class JobType(models.TextChoices):
-    Permeanet = 'Permenet'
+    Permanent = 'Permanent'
     Temporary = 'Temporary'
-    Intership = 'Intership'
+    Internship = 'Internship'
 
 
 class Education(models.TextChoices):
@@ -51,28 +51,22 @@ class Job(models.Model):
     description = models.TextField(null=True)
     email = models.EmailField()
     address = models.CharField(max_length=100, null=True)
-    jobType = models.CharField(
-        max_length=10,
-        choices=JobType.choices,
-        default=JobType.Permeanet
-    )
-    education = models.CharField(
-        max_length=10,
-        choices=Education.choices,
-        default=Education.Bachelors
-    )
-    industry = models.CharField(
-        max_length=30,
-        choices=Industry.choices,
-        default=Industry.Business
-    )
-    experience = models.CharField(
-        max_length=20,
-        choices=Experience.choices,
-        default=Experience.No_Experience
-    )
-    salary = models.IntegerField(default=1, validators=[
-                                 MinValueValidator(1), MaxValueValidator(1000000)])
+    jobType = models.CharField(max_length=10,
+                               choices=JobType.choices,
+                               default=JobType.Permanent)
+    education = models.CharField(max_length=10,
+                                 choices=Education.choices,
+                                 default=Education.Bachelors)
+    industry = models.CharField(max_length=30,
+                                choices=Industry.choices,
+                                default=Industry.Business)
+    experience = models.CharField(max_length=20,
+                                  choices=Experience.choices,
+                                  default=Experience.No_Experience)
+    salary = models.IntegerField(
+        default=1,
+        validators=[MinValueValidator(1),
+                    MaxValueValidator(1000000)])
     position = models.IntegerField(default=1)
     company = models.CharField(max_length=100, null=True)
     point = gismodels.PointField(default=Point(0.0, 0.0))
