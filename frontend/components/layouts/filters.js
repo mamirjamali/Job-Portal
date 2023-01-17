@@ -21,7 +21,10 @@ const Filters = () => {
     checkboxes.forEach(item => { if (item !== checkbox) item.checked = false })
     
     if (checkbox.checked) {
-        queryParams.set(checkbox.name, checkbox.value)
+      queryParams.set(checkbox.name, checkbox.value)
+        if (queryParams.has("page")) {
+          queryParams.set("page", 1)
+        }
       }
     else{
         queryParams.delete(checkbox.name, checkbox.value)

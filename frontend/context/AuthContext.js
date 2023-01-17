@@ -1,6 +1,5 @@
 import { useState, useEffect, createContext } from 'react'
 import axios from 'axios'
-import { useRouter } from 'next/router'
 
 const AuthContext = createContext()
 
@@ -11,7 +10,6 @@ export const AuthProvider = ( { children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [error, setError] = useState(null)
     
-    const router = useRouter()
     const login = async ({ username, password }) => {
         
         
