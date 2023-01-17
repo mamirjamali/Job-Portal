@@ -3,6 +3,8 @@ import Head from "next/head";
 import Header from "./Header";
 import Footer from "./Footer";
 import Script from "next/script";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
 
 const Layout = ({children, title = "Job Fouder"}) => {
     return ( 
@@ -30,6 +32,7 @@ const Layout = ({children, title = "Job Fouder"}) => {
                 src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
             />
         </Head>
+        <ToastContainer position="bottom-right"/>
         <Header />
             {children}
         <Footer/>

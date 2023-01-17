@@ -39,7 +39,6 @@ export async function getServerSideProps({query}) {
 
   const res = await axios.get(`${process.env.API_URL}/api/jobs/?${queryStr}`)
   const data = res.data
-  console.log(data)
   return {
     props: {
        data,
