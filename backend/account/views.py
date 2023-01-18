@@ -21,23 +21,18 @@ def register(request):
 
     if user.is_valid():
         if not User.objects.filter(username=data['email']).exists():
-            user = User.objects.create(
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                username=data['email'],
-                email=data['email'],
-                password=make_password(data['password'])
-            )
+            user = User.objects.create(first_name=data['first_name'],
+                                       last_name=data['last_name'],
+                                       username=data['email'],
+                                       email=data['email'],
+                                       password=make_password(
+                                           data['password']))
 
-            return Response(
-                {'message': 'You have successfuly registered'},
-                status=status.HTTP_200_OK
-            )
+            return Response({'message': 'You have successfuly registered'},
+                            status=status.HTTP_200_OK)
 
         else:
-            return Response(
-                {'error': 'User already exists'}
-            )
+            return Response({'error': 'User already exists'})
 
     else:
         return Response(user.errors)

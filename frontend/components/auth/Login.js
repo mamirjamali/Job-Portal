@@ -7,13 +7,14 @@ import { toast } from "react-toastify";
 const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const { loading, isAuthenticated, user, error, login } = useContext(AuthContext)
+    const { loading, isAuthenticated, error, login, clearErrors } = useContext(AuthContext)
     
     const router = useRouter()
 
     useEffect(() => {
         if (error) {
             toast.error(error)
+            clearErrors()
         }
         if (isAuthenticated & !loading) {
             router.push("/")

@@ -26,7 +26,7 @@ export default async (req, res) => {
             path: '/'
           }
         ])
-
+        
         return res.status(200).json({
           success: true
         })
@@ -36,7 +36,7 @@ export default async (req, res) => {
     } catch (error) {
 
        return res.status(error.response.status).json({
-         error: error.response && error.response.data.error
+         error: error.response.data.error
        })
     }
   }
