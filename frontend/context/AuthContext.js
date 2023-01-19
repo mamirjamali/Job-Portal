@@ -9,6 +9,8 @@ export const AuthProvider = ( { children }) => {
     const [loading, setLoading] = useState(false)
     const [user, setUser] = useState(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [updated, setUpdated] = useState(false)
+    const [uploaded, setUploaded] = useState(false)
     const [error, setError] = useState(null)
     
     const router = useRouter()
@@ -68,6 +70,67 @@ export const AuthProvider = ( { children }) => {
         }
     }
 
+    //Update User
+    const updateUser = async ({ first_name, last_name, email, password }, access_token) => {
+        try {
+            setLoading(true)
+            setError(null)
+
+            const res = await axios.put(`${process.env.API_URL}/api/me/update/`, {
+                first_name,
+                last_name,
+                email,
+                username: email,
+                password, 
+            }, {
+                headers:{
+                    Authorization: `Bearer ${access_token}`
+                }
+            })
+            if (res.data) {
+                setLoading(false)
+                setUpdated(true)
+                setUser(res.data)
+            }
+            if (res.data.error) {
+                setError(res.data.error)
+                setLoading(false)
+            }
+        }
+        catch (error) {
+            setLoading(false)
+            setError(error.response && error.response.data.error || error.response.data.detail)
+        }
+    }
+
+    //Upload Resume
+    const uploadResume = async (formData, access_token) => {
+        try {
+            setLoading(true)
+            const res = await axios.put(`${process.env.API_URL}/api/upload/resume/`,
+                formData
+           , {
+                headers:{
+                    Authorization: `Bearer ${access_token}`
+                }
+            })
+            if (res.data) {
+                setLoading(false)
+                setUploaded(true)
+            }
+            if (res.data.error) {
+                setError(res.data.error)
+                setLoading(false)
+            }
+        }
+        catch (error) {
+            setLoading(false)
+            setError(error.response &&
+                error.response.data.error || error.response.data.detail
+            )
+        }
+    }
+
     
     //Load User
     const loadUser = async () => {
@@ -118,6 +181,12 @@ export const AuthProvider = ( { children }) => {
                 user,
                 isAuthenticated,
                 error,
+                updated,
+                uploaded,
+                setUpdated,
+                setUploaded,
+                uploadResume,
+                updateUser,
                 login,
                 logout,
                 register,

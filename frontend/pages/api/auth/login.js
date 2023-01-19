@@ -15,16 +15,16 @@ export default async (req, res) => {
           'Content-Type': 'application/json'
         },
       })
-      
+
       if (response.data.access) {
         res.setHeader("Set-Cookie", [
-          cookie.serialize('access', response.data.access), {
+          cookie.serialize("access", response.data.access, {
             httpOnly:true,
-            secure: process.env.NODE_ENV !== 'development',
-            maxAge: 60 * 60 * 24 * 15,
-            sameSite: 'Lax',
-            path: '/'
-          }
+            secure: process.env.NODE_ENV !== "development",
+            maxAge: 60 * 60 * 24 * 15, //15 days
+            sameSite: "Lax",
+            path: "/",
+          })
         ])
         
         return res.status(200).json({

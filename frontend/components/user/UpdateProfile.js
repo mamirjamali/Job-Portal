@@ -5,29 +5,35 @@ import AuthContext from "@/context/AuthContext";
 import { toast } from "react-toastify";
 
 
-const Register = () => {
+const UpdateProfile = ({access_token}) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
-    const { loading, isAuthenticated, error, register, clearErrors } = useContext(AuthContext)
+    const { loading, error, user, clearErrors, updated, setUpdated, updateUser } = useContext(AuthContext)
 
     const router = useRouter()
 
     useEffect(() => {
+        if (user) {
+            setFirstName(user.first_name)
+            setLastName(user.last_name)
+            setEmail(user.email)
+        }
         if (error) {
             toast.error(error)
             clearErrors()
         }
-        if (isAuthenticated & !loading) {
-            router.push("/login")
+        if (updated) {
+          setUpdated(false)
+          router.push('/me')
         }
-    }, [error, isAuthenticated, loading])
+    }, [error, user, updated])
 
     //Submit Handler
     const submitHandler = (e) => {
         e.preventDefault()
-        register({ first_name: firstName, last_name: lastName, email, password })
+        updateUser({ first_name: firstName, last_name: lastName, email, password }, access_token)
     }
 
   return (
@@ -35,13 +41,13 @@ const Register = () => {
       <div className="modalWrapper">
         <div className="left">
           <div style={{ width: "100%", height: "100%", position: "relative" }}>
-            <Image src="/images/signup.svg" alt="register" />
+            <Image src="/images/profile.svg" alt="register" fill />
           </div>
         </div>
         <div className="right">
           <div className="rightContentWrapper">
             <div className="headerWrapper">
-              <h2> SIGN UP</h2>
+              <h2> Profile</h2>
             </div>
             <form className="form" onSubmit={submitHandler}>
               <div className="inputWrapper">
@@ -64,7 +70,6 @@ const Register = () => {
                   <input
                     type="password"
                     placeholder="Enter Your Password"
-                    required
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                   />
@@ -73,7 +78,7 @@ const Register = () => {
               <div className="registerButtonWrapper">
                 <button type="submit" className="registerButton">
                     {
-                      loading ? 'Authenticating...' : 'Register'                  
+                      loading ? 'Updating...' : 'Update'                  
                     }
                 </button>
               </div>
@@ -85,4 +90,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default UpdateProfile;
