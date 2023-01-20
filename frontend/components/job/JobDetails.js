@@ -1,23 +1,44 @@
 import moment from "moment";
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import JobContext from "@/context/JobContext";
 import mapboxgl from 'mapbox-gl/dist/mapbox-gl.js'
+import { toast } from "react-toastify";
 
 mapboxgl.accessToken = process.env.MAPBOX_ACCESS_TOKEN;
 
-const JobDetails = ({ job, candidates }) => {
+const JobDetails = ({ job, candidates, access_token }) => {
+  
+  const { applyToJob, loading, applied, error, clearErrors, checkApplied } = useContext(JobContext)
+  
+  useEffect(() => {
+
+    const coordinates = job.point.split("(")[1].replace(")", "").split(" ")
+    const map = new mapboxgl.Map({
+        container: 'job-map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: coordinates,
+        zoom: 11
+      });
+
+    new mapboxgl.Marker().setLngLat(coordinates).addTo(map)
     
-    useEffect(() => {
+    if (error) {
+      toast.error(error)
+      clearErrors()
+    }
+    checkApplied(job.id, access_token);
 
-        const coordinates = job.point.split("(")[1].replace(")", "").split(" ")
-        const map = new mapboxgl.Map({
-            container: 'job-map',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: coordinates,
-            zoom: 11
-          });
+  }, [error])
+  
 
-        new mapboxgl.Marker().setLngLat(coordinates).addTo(map)
-    })
+  const applyToJobHandler = () => {
+    applyToJob(job.id, access_token)
+  }
+
+  const d1 = moment(job.lastdate)
+  const d2 = moment(Date.now())
+  const isLastDatePassed = d1.diff(d2, "days") < 0 ? true : false
+
   return (
     <div className="job-details-wrapper">
       <div className="container container-fluid">
@@ -37,9 +58,25 @@ const JobDetails = ({ job, candidates }) => {
 
                 <div className="mt-3">
                   <span>
-                    <button className="btn btn-primary px-4 py-2 apply-btn">
-                      Apply Now
-                    </button>
+                    {
+                      loading ?
+                       <button className="btn btn-primary px-4 py-2 apply-btn">
+                         Loading...
+                       </button>
+                      : applied ? 
+                      <button className="btn btn-success px-4 py-2 apply-btn">
+                        Applied
+                      </button>
+                      :
+                      <button
+                            className={`btn btn-${isLastDatePassed ? 'secondary' : 'primary'} px-4 py-2 apply-btn`}
+                            onClick={applyToJobHandler}
+                            disabled = {isLastDatePassed}
+                      >
+                        Apply Now
+                      </button>
+                        
+                    }
                     <span className="ml-4 text-success">
                       <b>{candidates}</b> candidates has applied to this job.
                     </span>
@@ -117,15 +154,17 @@ const JobDetails = ({ job, candidates }) => {
               <h5>Last Date:</h5>
               <p>{job.lastdate.substring(0, 10)}</p>
             </div>
-
-            <div className="mt-5 p-0">
-              <div className="alert alert-danger">
-                <h5>Note:</h5>
-                You can no longer apply to this job. This job is expired. Last
-                date to apply for this job was: <b>15-2-2022</b>
-                <br /> Checkout others job on Jobbee.
+            {
+              isLastDatePassed &&
+              <div className="mt-5 p-0">
+                <div className="alert alert-danger">
+                  <h5>Note:</h5>
+                  You can no longer apply to this job. This job is expired. Last
+                  date to apply for this job was: <b>{job.lastdate.substring(0, 10)}</b>
+                  <br /> Checkout others job on Jobbee.
+                </div>
               </div>
-            </div>
+            }
           </div>
         </div>
       </div>

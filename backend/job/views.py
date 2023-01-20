@@ -16,8 +16,8 @@ from .filters import JobsFilter
 @api_view(['GET'])
 def getAllJobs(request):
 
-    filterset = JobsFilter(
-        request.GET, queryset=Job.objects.all().order_by('id'))
+    filterset = JobsFilter(request.GET,
+                           queryset=Job.objects.all().order_by('id'))
     count = filterset.qs.count()
 
     # Pagination
@@ -43,7 +43,7 @@ def getJob(request, pk):
     candidates = job.candidatesapplied_set.all().count()
 
     serializer = JobSerializer(job, many=False)
-    return Response({"job":serializer.data, "candidates": candidates})
+    return Response({"job": serializer.data, "candidates": candidates})
 
 
 # Post new job
@@ -68,10 +68,8 @@ def updateJob(request, pk):
     job = get_object_or_404(Job, id=pk)
 
     if job.user != request.user:
-        return Response(
-            {'message': 'You are not allowed to update this job'},
-            status=status.HTTP_403_FORBIDDEN
-        )
+        return Response({'message': 'You are not allowed to update this job'},
+                        status=status.HTTP_403_FORBIDDEN)
 
     job.title = request.data['title']
     job.description = request.data['description']
@@ -98,10 +96,8 @@ def deleteJob(request, pk):
     job = get_object_or_404(Job, id=pk)
 
     if job.user != request.user:
-        return Response(
-            {'message': 'You are not allowed to update this job'},
-            status=status.HTTP_403_FORBIDDEN
-        )
+        return Response({'message': 'You are not allowed to update this job'},
+                        status=status.HTTP_403_FORBIDDEN)
 
     job.delete()
     return Response({'message: Item deleted'}, status=status.HTTP_200_OK)
@@ -115,15 +111,14 @@ def getTopicStat(request, topic):
     jobs = Job.objects.filter(**args)
 
     if len(jobs) == 0:
-        return Response({'message': 'No stats founded for {topic}'.format(topic=topic)})
+        return Response(
+            {'message': 'No stats founded for {topic}'.format(topic=topic)})
 
-    stats = jobs.aggregate(
-        total_jobs=Count('title'),
-        avg_position=Avg('position'),
-        avg_salary=Avg('salary'),
-        min_salary=Min('salary'),
-        max_salary=Max('salary')
-    )
+    stats = jobs.aggregate(total_jobs=Count('title'),
+                           avg_position=Avg('position'),
+                           avg_salary=Avg('salary'),
+                           min_salary=Min('salary'),
+                           max_salary=Max('salary'))
 
     return Response(stats)
 
@@ -141,8 +136,9 @@ def applyToJob(request, pk):
                         status=status.HTTP_400_BAD_REQUEST)
 
     if job.lastdate < timezone.now():
-        return Response({'error': 'You can not apply to this job. Date is over'},
-                        status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {'error': 'You can not apply to this job. Date is over'},
+            status=status.HTTP_400_BAD_REQUEST)
 
     alreadyApplied = job.candidatesapplied_set.filter(user=user).exists()
 
@@ -151,17 +147,14 @@ def applyToJob(request, pk):
                         status=status.HTTP_400_BAD_REQUEST)
 
     jobApplied = CandidatesApplied.objects.create(
-        user=user,
-        resume=user.userprofile.resume,
-        job=job
-    )
+        user=user, resume=user.userprofile.resume, job=job)
 
-    return Response({
-        'applied': True,
-        'job_id': jobApplied.id
-    },
-        status=status.HTTP_200_OK
-    )
+    return Response(
+        {
+            'applied': True,
+            # 'job_id': jobApplied.id
+        },
+        status=status.HTTP_200_OK)
 
 
 # Get applied jobs list
@@ -212,8 +205,9 @@ def getCandidatesApllied(request, pk):
     job = get_object_or_404(Job, id=pk)
 
     if job.user != user:
-        return Response({'error': 'You do not have the premissions to view this resource'},
-                        status=status.HTTP_403_FORBIDDEN)
+        return Response(
+            {'error': 'You do not have the premissions to view this resource'},
+            status=status.HTTP_403_FORBIDDEN)
     candidates = job.candidatesapplied_set.all()
 
     serializer = CandidatesAppliedSerializere(candidates, many=True)

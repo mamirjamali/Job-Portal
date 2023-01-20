@@ -19,10 +19,10 @@ const Header = () => {
         <Link href="/">
           <div className="logoWrapper">
             <div className="logoImgWrapper">
-              <Image width="30" height="30" src="/images/logo.png" alt="" />
+              <img width="30" height="30" src="/images/logo.png" alt="home"/>
             </div>
             <span className="logo1">Job</span>
-            <span className="logo2">bee</span>
+            <span className="logo2">  Portal</span>
           </div>
         </Link>
         <div className="btnsWrapper">
@@ -43,12 +43,9 @@ const Header = () => {
                 >
                   <span>Hi { user.first_name}</span> {" "}
                 </a>
-                <Link href="/" legacyBehavior>
-                    <a className="dropdown-item text-danger" onClick={logoutHandler}>Logout</a>
-                  </Link>
                 <div className="dropdown-menu" aria-labelledby="dropDownMenuButton">
 
-                  <Link href="/employeer/jobs" legacyBehavior>
+                  <Link href="/employeer/jobs" legacyBehavior >
                     <a className="dropdown-item">My Jobs</a>
                   </Link>
 
@@ -64,6 +61,9 @@ const Header = () => {
                     <a className="dropdown-item">Upload Resume</a>
                   </Link>
 
+                  <Link href="/" legacyBehavior>
+                    <a className="dropdown-item text-danger" onClick={logoutHandler}>Logout</a>
+                  </Link>
                 
 
                 </div>
