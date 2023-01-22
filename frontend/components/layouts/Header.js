@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -8,6 +8,18 @@ import AuthContext from "@/context/AuthContext";
 const Header = () => { 
   
   const { loading, user, logout } = useContext(AuthContext)
+  const [show, setShow] = useState('block')
+  
+  const displayHandler = (show) => {
+    if (show === 'block') {
+      setShow('none')
+      
+    } else {
+      
+      setShow('block')
+    }
+
+  }
 
   const logoutHandler = () => {
     logout()
@@ -33,7 +45,7 @@ const Header = () => {
           </Link>
           {
             user ?
-            (<div className="dropdown ml-3">
+            (<div className="dropdown ml-3" onClick={displayHandler} >
                 <a
                   className="btn dropdown-toggle mr-4"
                   id="dropDownMenuButton"
@@ -43,7 +55,7 @@ const Header = () => {
                 >
                   <span>Hi { user.first_name}</span> {" "}
                 </a>
-                <div className="dropdown-menu" aria-labelledby="dropDownMenuButton">
+                <div className="dropdown-menu" aria-labelledby="dropDownMenuButton" display={show}>
 
                   <Link href="/employeer/jobs" legacyBehavior >
                     <a className="dropdown-item">My Jobs</a>

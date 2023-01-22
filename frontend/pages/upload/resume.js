@@ -14,7 +14,6 @@ const UploadResumePage = ({access_token}) => {
 export default UploadResumePage;
 
 
-
 export async function getServerSideProps({req}) {
 
     const access_token = req.cookies.access
